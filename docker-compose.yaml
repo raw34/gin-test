@@ -1,0 +1,48 @@
+services:
+
+### mysql
+    mysql:
+        image: mysql:5.6
+        container_name:
+            docker_mysql_1
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: "123456"
+            MYSQL_DATABASE: "test"
+        volumes:
+#            - $PATH_WWW_ETC/mysql/my.cnf:/etc/mysql/my.cnf
+            - $PATH_WWW_DATA/mysql:/var/lib/mysql
+            - $PATH_WWW_LOG/mysql:/var/log/mysql
+
+### redis
+    redis:
+        image: redis:alpine
+        container_name:
+            docker_redis_1
+        ports:
+            - "6379:6379"
+        volumes:
+#            - $PATH_WWW_ETC/redis/redis.conf:/etc/redis/redis.conf
+            - $PATH_WWW_DATA/redis:/data
+        command: redis-server --requirepass 123456
+
+### go
+    go:
+#        build: .
+        image: raw34/gin-test
+        container_name:
+            docker_go_1
+        ports:
+            - "28009:28009"
+        environment:
+            MOLTEN_ENABLE: 0
+        volumes:
+            - ./.gin-test.yaml:/root/.gin-test.yaml
+            - $PATH_WWW_LOG/go:/data/log
+            - $PATH_WWW_ROOT/repo:/www
+            - ~/.ssh:/root/.ssh
+            - /tmp:/tmp
+        links:
+            - mysql
+            - redis
