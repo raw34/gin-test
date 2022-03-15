@@ -6,5 +6,5 @@ PATH_WWW_DATA=~/wwwdata
 PATH_WWW_LOG=~/wwwlogs
 SHELL_PROFILE=~/.zshrc
 
-APP_PORT=28009
+APP_PORT=8080
 LOG_PATH=./logs

@@ -1,29 +1,35 @@
 package api
 
 import (
-	"github.com/gin-contrib/pprof"
-	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
+    "github.com/gin-contrib/pprof"
+    "github.com/gin-gonic/gin"
+    "github.com/spf13/viper"
 )
 
 var router *gin.Engine
 
-func Execute()  {
-	router = gin.Default()
+func Execute() {
+    router = gin.Default()
 
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+    router.GET("/ping", func(c *gin.Context) {
+        c.JSON(200, gin.H{
+            "message": "pong",
+        })
+    })
 
-	pprof.Register(router)
+    router.GET("/error", func(c *gin.Context) {
+        c.JSON(500, gin.H{
+            "error": "internal error",
+        })
+    })
 
-	port := viper.GetString("app.port")
+    pprof.Register(router)
 
-	err := router.Run(":" + port)
+    port := viper.GetString("app.port")
 
-	if err != nil {
-		panic(err)
-	}
+    err := router.Run(":" + port)
+
+    if err != nil {
+        panic(err)
+    }
 }
