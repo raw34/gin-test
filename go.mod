@@ -7,4 +7,5 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.8.1
+	go.uber.org/zap v1.17.0
 )
