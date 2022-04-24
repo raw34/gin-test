@@ -12,7 +12,7 @@ import (
 
 func NewCasbinEnforcer() *casbin.Enforcer {
 	logger := NewLogger()
-	a, err := gormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test", true)
+	a, err := gormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/", "test", "casbin_rule")
 	//a, err := xormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test", true)
 	if err != nil {
 		logger.Fatal("load mysql failed, %v", err.Error())
