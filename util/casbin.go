@@ -1,22 +1,28 @@
 package util
 
 import (
-	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
 	"net/http"
 
 	"github.com/casbin/casbin/v2"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func NewCasbinEnforcer() *casbin.Enforcer {
-	// 从CSV文件adapter加载策略规则
-	// 使用自己的 adapter 替换。
-	a := fileadapter.NewAdapter("config/policy.csv")
+	logger := NewLogger()
+	a, _ := gormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test", true)
 
 	// 创建enforcer
 	e, err := casbin.NewEnforcer("config/model.conf", a)
 	if err != nil {
-		NewLogger().Fatal("load file failed, %v", err.Error())
+		logger.Fatal("load file failed, %v", err.Error())
+	}
+
+	// 加载策略
+	err = e.LoadPolicy()
+	if err != nil {
+		logger.Fatal("load policy failed, %v", err.Error())
 	}
 
 	return e

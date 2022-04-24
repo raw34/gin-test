@@ -3,4 +3,4 @@ p, bob, /users, POST
 p, role::admin, /users, GET
 p, role::admin, /users, POST
 p, role::admin, /users, DELETE
-g, alice, role::admin
+g, alice, role::admin,
