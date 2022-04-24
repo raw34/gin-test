@@ -42,11 +42,25 @@ func CheckPermission(ctx *gin.Context, sub, obj, act string) {
 }
 
 func GetRoles(ctx *gin.Context, username string) {
+	logger := NewLogger()
+	logger.Info("username = %s", username)
 	e := NewCasbinEnforcer()
 	roles, err := e.GetRolesForUser(username)
 	if err != nil {
-		NewLogger().Fatal("load file failed, %v", err.Error())
+		logger.Fatal("load file failed, %v", err.Error())
 	}
 
 	ctx.JSON(http.StatusOK, roles)
+}
+
+func AddRoles(ctx *gin.Context, username string, roles []string) {
+	logger := NewLogger()
+	logger.Info("username = %s, roles = %s", username, roles)
+	e := NewCasbinEnforcer()
+	res, err := e.AddRolesForUser(username, roles)
+	if err != nil {
+		logger.Fatal("load file failed, %v", err.Error())
+	}
+
+	ctx.JSON(http.StatusOK, res)
 }

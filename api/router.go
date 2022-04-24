@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/raw34/gin-test/util"
 	"github.com/spf13/viper"
+	"strings"
 )
 
 var router *gin.Engine
@@ -49,15 +50,14 @@ func Execute() {
 	})
 
 	router.GET("/roles", func(c *gin.Context) {
-		sub := c.Query("name")
+		sub := c.Query("user_name")
 		util.GetRoles(c, sub)
 	})
 
 	router.POST("/roles", func(c *gin.Context) {
-		sub := c.Query("name")
-		obj := c.Request.URL.Path
-		act := c.Request.Method
-		util.CheckPermission(c, sub, obj, act)
+		sub := c.PostForm("user_name")
+		obj := c.PostForm("role_names")
+		util.AddRoles(c, sub, strings.Split(obj, ","))
 	})
 
 	pprof.Register(router)
