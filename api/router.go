@@ -50,9 +50,7 @@ func Execute() {
 
 	router.GET("/roles", func(c *gin.Context) {
 		sub := c.Query("name")
-		obj := c.Request.URL.Path
-		act := c.Request.Method
-		util.CheckPermission(c, sub, obj, act)
+		util.GetRoles(c, sub)
 	})
 
 	router.POST("/roles", func(c *gin.Context) {

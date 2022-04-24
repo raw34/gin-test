@@ -40,3 +40,13 @@ func CheckPermission(ctx *gin.Context, sub, obj, act string) {
 	logger.Info("权限验证通过")
 	ctx.String(http.StatusOK, "权限验证通过")
 }
+
+func GetRoles(ctx *gin.Context, username string) {
+	e := NewCasbinEnforcer()
+	roles, err := e.GetRolesForUser(username)
+	if err != nil {
+		NewLogger().Fatal("load file failed, %v", err.Error())
+	}
+
+	ctx.JSON(http.StatusOK, roles)
+}
