@@ -35,14 +35,28 @@ func Execute() {
 	})
 
 	router.GET("/users", func(c *gin.Context) {
-		sub := c.Query("username")
+		sub := c.Query("name")
 		obj := c.Request.URL.Path
 		act := c.Request.Method
 		util.CheckPermission(c, sub, obj, act)
 	})
 
 	router.POST("/users", func(c *gin.Context) {
-		sub := c.Query("username")
+		sub := c.Query("name")
+		obj := c.Request.URL.Path
+		act := c.Request.Method
+		util.CheckPermission(c, sub, obj, act)
+	})
+
+	router.GET("/roles", func(c *gin.Context) {
+		sub := c.Query("name")
+		obj := c.Request.URL.Path
+		act := c.Request.Method
+		util.CheckPermission(c, sub, obj, act)
+	})
+
+	router.POST("/roles", func(c *gin.Context) {
+		sub := c.Query("name")
 		obj := c.Request.URL.Path
 		act := c.Request.Method
 		util.CheckPermission(c, sub, obj, act)

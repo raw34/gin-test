@@ -1,19 +1,31 @@
 package util
 
 import (
+	fileadapter "github.com/casbin/casbin/v2/persist/file-adapter"
 	"net/http"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/gin-gonic/gin"
 )
 
+func NewCasbinEnforcer() *casbin.Enforcer {
+	// 从CSV文件adapter加载策略规则
+	// 使用自己的 adapter 替换。
+	a := fileadapter.NewAdapter("config/policy.csv")
+
+	// 创建enforcer
+	e, err := casbin.NewEnforcer("config/model.conf", a)
+	if err != nil {
+		NewLogger().Fatal("load file failed, %v", err.Error())
+	}
+
+	return e
+}
+
 func CheckPermission(ctx *gin.Context, sub, obj, act string) {
 	logger := NewLogger()
-	e, err := casbin.NewEnforcer("model.conf", "policy.csv")
-	if err != nil {
-		logger.Fatal("load file failed, %v", err.Error())
-	}
 	logger.Info("sub = %s obj = %s act = %s", sub, obj, act)
+	e := NewCasbinEnforcer()
 	ok, err := e.Enforce(sub, obj, act)
 	if err != nil {
 		logger.Error("enforce failed %s", err.Error())
