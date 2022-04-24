@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/casbin/casbin/v2"
+	//"github.com/casbin/xorm-adapter/v2"
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -11,7 +12,11 @@ import (
 
 func NewCasbinEnforcer() *casbin.Enforcer {
 	logger := NewLogger()
-	a, _ := gormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test", true)
+	a, err := gormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test", true)
+	//a, err := xormadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test", true)
+	if err != nil {
+		logger.Fatal("load mysql failed, %v", err.Error())
+	}
 
 	// 创建enforcer
 	e, err := casbin.NewEnforcer("config/model.conf", a)
