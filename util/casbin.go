@@ -2,6 +2,7 @@ package util
 
 import (
 	"net/http"
+	"sync"
 
 	"github.com/casbin/casbin/v2"
 
@@ -10,28 +11,33 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var syncedEnforcer *casbin.SyncedEnforcer
+var once sync.Once
+
 func NewCasbinEnforcer() *casbin.SyncedEnforcer {
-	logger := NewLogger()
-	a, err := entadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test")
-	if err != nil {
-		logger.Fatal("load mysql failed, %v", err.Error())
-	}
+	once.Do(func() {
+		logger := NewLogger()
+		a, err := entadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test")
+		if err != nil {
+			logger.Fatal("load mysql failed, %v", err.Error())
+		}
 
-	// 创建enforcer
-	e, err := casbin.NewSyncedEnforcer("config/model.conf", a)
-	if err != nil {
-		logger.Fatal("load file failed, %v", err.Error())
-	}
-	e.EnableLog(true)
-	e.EnableAutoSave(true)
+		// 创建enforcer
+		syncedEnforcer, err = casbin.NewSyncedEnforcer("config/model.conf", a)
+		if err != nil {
+			logger.Fatal("load file failed, %v", err.Error())
+		}
+		syncedEnforcer.EnableLog(true)
+		syncedEnforcer.EnableAutoSave(true)
 
-	// 加载策略
-	err = e.LoadPolicy()
-	if err != nil {
-		logger.Fatal("load policy failed, %v", err.Error())
-	}
+		// 加载策略
+		err = syncedEnforcer.LoadPolicy()
+		if err != nil {
+			logger.Fatal("load policy failed, %v", err.Error())
+		}
+	})
 
-	return e
+	return syncedEnforcer
 }
 
 func CheckPermission(ctx *gin.Context, sub, obj, act string) {
