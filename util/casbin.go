@@ -22,6 +22,7 @@ func NewCasbinEnforcer() *casbin.Enforcer {
 	if err != nil {
 		logger.Fatal("load file failed, %v", err.Error())
 	}
+	e.EnableLog(true)
 
 	// 加载策略
 	err = e.LoadPolicy()
