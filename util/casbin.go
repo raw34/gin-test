@@ -10,7 +10,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func NewCasbinEnforcer() *casbin.Enforcer {
+func NewCasbinEnforcer() *casbin.SyncedEnforcer {
 	logger := NewLogger()
 	a, err := entadapter.NewAdapter("mysql", "root:123456@tcp(127.0.0.1:3306)/test")
 	if err != nil {
@@ -18,11 +18,12 @@ func NewCasbinEnforcer() *casbin.Enforcer {
 	}
 
 	// 创建enforcer
-	e, err := casbin.NewEnforcer("config/model.conf", a)
+	e, err := casbin.NewSyncedEnforcer("config/model.conf", a)
 	if err != nil {
 		logger.Fatal("load file failed, %v", err.Error())
 	}
 	e.EnableLog(true)
+	e.EnableAutoSave(true)
 
 	// 加载策略
 	err = e.LoadPolicy()
